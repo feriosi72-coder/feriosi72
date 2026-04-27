@@ -1,0 +1,546 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;500;600;700;800&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .app {
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    background: var(--color-background-tertiary);
+    padding: 2rem 1.5rem;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    border: 0.5px solid var(--color-border-secondary);
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .header h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--color-text-primary);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+  }
+
+  .header h1 span {
+    color: #5DCAA5;
+  }
+
+  .header p {
+    margin-top: 0.6rem;
+    font-size: 15px;
+    color: var(--color-text-secondary);
+    font-weight: 400;
+  }
+
+  .card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-tertiary);
+    margin-bottom: 0.75rem;
+  }
+
+  .api-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .api-input {
+    flex: 1;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-md);
+    padding: 10px 14px;
+    color: var(--color-text-primary);
+    outline: none;
+  }
+
+  .api-input:focus {
+    border-color: #1D9E75;
+  }
+
+  .eye-btn {
+    width: 36px;
+    height: 36px;
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-md);
+    background: var(--color-background-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-secondary);
+    flex-shrink: 0;
+    font-size: 14px;
+  }
+
+  .eye-btn:hover { background: var(--color-background-tertiary); }
+
+  .prompt-textarea {
+    width: 100%;
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-md);
+    padding: 12px 14px;
+    color: var(--color-text-primary);
+    outline: none;
+    resize: vertical;
+    min-height: 90px;
+    line-height: 1.6;
+  }
+
+  .prompt-textarea:focus { border-color: #1D9E75; }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 1rem;
+  }
+
+  .option-btn {
+    padding: 10px 12px;
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-md);
+    background: var(--color-background-secondary);
+    color: var(--color-text-secondary);
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s;
+  }
+
+  .option-btn:hover { background: var(--color-background-tertiary); color: var(--color-text-primary); }
+
+  .option-btn.active {
+    border-color: #1D9E75;
+    background: #E1F5EE;
+    color: #0F6E56;
+  }
+
+  .generate-btn {
+    width: 100%;
+    padding: 14px;
+    background: #1D9E75;
+    color: white;
+    border: none;
+    border-radius: var(--border-radius-md);
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: -0.01em;
+    transition: all 0.15s;
+  }
+
+  .generate-btn:hover:not(:disabled) { background: #0F6E56; }
+  .generate-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .status-area {
+    margin-top: 1rem;
+    display: none;
+  }
+
+  .status-area.visible { display: block; }
+
+  .status-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-md);
+    font-size: 13px;
+    color: var(--color-text-secondary);
+  }
+
+  .spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid var(--color-border-secondary);
+    border-top-color: #1D9E75;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .result-area {
+    display: none;
+    margin-top: 1rem;
+  }
+  .result-area.visible { display: block; }
+
+  .result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+
+  .result-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .action-btn {
+    padding: 6px 14px;
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-md);
+    background: var(--color-background-secondary);
+    color: var(--color-text-primary);
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .action-btn:hover { background: var(--color-background-tertiary); }
+  .action-btn.primary { background: #1D9E75; color: white; border-color: #1D9E75; }
+  .action-btn.primary:hover { background: #0F6E56; }
+
+  .preview-frame {
+    width: 100%;
+    height: 480px;
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-md);
+    background: white;
+  }
+
+  .error-msg {
+    padding: 12px 14px;
+    background: var(--color-background-danger, #FCEBEB);
+    border: 0.5px solid var(--color-border-danger, #F7C1C1);
+    border-radius: var(--border-radius-md);
+    color: var(--color-text-danger, #A32D2D);
+    font-size: 13px;
+    display: none;
+    margin-top: 0.75rem;
+  }
+
+  .error-msg.visible { display: block; }
+
+  .code-toggle {
+    display: flex;
+    gap: 4px;
+    padding: 3px;
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-md);
+    margin-bottom: 0.75rem;
+  }
+
+  .toggle-btn {
+    flex: 1;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    background: transparent;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+  }
+  .toggle-btn.active { background: var(--color-background-primary); color: var(--color-text-primary); }
+
+  .code-view {
+    display: none;
+    position: relative;
+  }
+  .code-view.visible { display: block; }
+
+  .code-block {
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-md);
+    padding: 14px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    overflow-x: auto;
+    max-height: 320px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+    line-height: 1.6;
+  }
+</style>
+
+<div class="app">
+  <div class="header">
+    <div class="header-badge">
+      <svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4" fill="#1D9E75"/></svg>
+      Mistral AI · Générateur de sites
+    </div>
+    <h1>Crée ton site<br>avec <span>Mistral</span></h1>
+    <p>Décris ce que tu veux, l'IA génère le HTML complet.</p>
+  </div>
+
+  <div class="card">
+    <div class="section-label">Clé API Mistral</div>
+    <div class="api-row">
+      <input class="api-input" id="apiKey" type="password" placeholder="sk-mistral-xxxxxxxxxxxxxxxxxx" autocomplete="off" />
+      <button class="eye-btn" id="eyeBtn" onclick="toggleVisibility()">👁</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-label">Type de site</div>
+    <div class="options-grid" id="typeOptions">
+      <button class="option-btn active" onclick="selectType(this, 'landing page')">🏠 Landing page</button>
+      <button class="option-btn" onclick="selectType(this, 'portfolio')">🎨 Portfolio</button>
+      <button class="option-btn" onclick="selectType(this, 'blog')">📝 Blog</button>
+      <button class="option-btn" onclick="selectType(this, 'dashboard')">📊 Dashboard</button>
+      <button class="option-btn" onclick="selectType(this, 'e-commerce')">🛍 E-commerce</button>
+      <button class="option-btn" onclick="selectType(this, 'restaurant')">🍽 Restaurant</button>
+    </div>
+
+    <div class="section-label">Style visuel</div>
+    <div class="options-grid" id="styleOptions">
+      <button class="option-btn active" onclick="selectStyle(this, 'moderne et minimaliste')">✦ Moderne</button>
+      <button class="option-btn" onclick="selectStyle(this, 'coloré et dynamique')">🎨 Coloré</button>
+      <button class="option-btn" onclick="selectStyle(this, 'sombre et élégant dark mode')">🌑 Dark</button>
+      <button class="option-btn" onclick="selectStyle(this, 'rétro et vintage')">📻 Rétro</button>
+    </div>
+
+    <div class="section-label">Description de ton site</div>
+    <textarea class="prompt-textarea" id="prompt" placeholder="Ex : un site pour mon agence de design graphique avec une section héros, nos services, et un formulaire de contact..."></textarea>
+  </div>
+
+  <button class="generate-btn" id="generateBtn" onclick="generate()">
+    Générer le site →
+  </button>
+
+  <div class="status-area" id="statusArea">
+    <div class="status-bar">
+      <div class="spinner"></div>
+      <span id="statusText">Mistral génère votre site...</span>
+    </div>
+  </div>
+
+  <div class="error-msg" id="errorMsg"></div>
+
+  <div class="result-area" id="resultArea">
+    <div class="result-header">
+      <div class="section-label" style="margin:0">Résultat</div>
+      <div class="result-actions">
+        <button class="action-btn" onclick="copyCode()">Copier le code</button>
+        <button class="action-btn primary" onclick="downloadHTML()">Télécharger .html</button>
+      </div>
+    </div>
+
+    <div class="code-toggle">
+      <button class="toggle-btn active" id="previewToggle" onclick="showTab('preview')">Aperçu</button>
+      <button class="toggle-btn" id="codeToggle" onclick="showTab('code')">Code source</button>
+    </div>
+
+    <iframe class="preview-frame" id="previewFrame"></iframe>
+    <div class="code-view" id="codeView">
+      <pre class="code-block" id="codeBlock"></pre>
+    </div>
+  </div>
+</div>
+
+<script>
+  let selectedType = 'landing page';
+  let selectedStyle = 'moderne et minimaliste';
+  let generatedCode = '';
+
+  function selectType(btn, val) {
+    document.querySelectorAll('#typeOptions .option-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedType = val;
+  }
+
+  function selectStyle(btn, val) {
+    document.querySelectorAll('#styleOptions .option-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedStyle = val;
+  }
+
+  function toggleVisibility() {
+    const inp = document.getElementById('apiKey');
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+  }
+
+  function showTab(tab) {
+    const preview = document.getElementById('previewFrame');
+    const code = document.getElementById('codeView');
+    const pt = document.getElementById('previewToggle');
+    const ct = document.getElementById('codeToggle');
+    if (tab === 'preview') {
+      preview.style.display = 'block';
+      code.classList.remove('visible');
+      pt.classList.add('active');
+      ct.classList.remove('active');
+    } else {
+      preview.style.display = 'none';
+      code.classList.add('visible');
+      pt.classList.remove('active');
+      ct.classList.add('active');
+    }
+  }
+
+  async function generate() {
+    const apiKey = document.getElementById('apiKey').value.trim();
+    const prompt = document.getElementById('prompt').value.trim();
+    const err = document.getElementById('errorMsg');
+
+    err.classList.remove('visible');
+    err.textContent = '';
+
+    if (!apiKey) {
+      err.textContent = 'Veuillez entrer votre clé API Mistral.';
+      err.classList.add('visible');
+      return;
+    }
+
+    const description = prompt || `un ${selectedType} ${selectedStyle}`;
+    const fullPrompt = `Tu es un expert en développement web. Génère un site HTML complet, magnifique et fonctionnel.
+
+Type de site : ${selectedType}
+Style : ${selectedStyle}
+Description : ${description}
+
+RÈGLES STRICTES :
+- Retourne UNIQUEMENT le code HTML, rien d'autre
+- Un seul fichier HTML complet avec CSS et JS intégrés dans des balises <style> et <script>
+- CSS moderne avec animations subtiles et design soigné
+- Utilise des Google Fonts appropriées
+- Contenu fictif mais réaliste et professionnel en français
+- Responsive mobile-first
+- Pas d'images externes (utilise des placeholders CSS ou des SVG inline)
+- Commence directement par <!DOCTYPE html>`;
+
+    const statusArea = document.getElementById('statusArea');
+    const statusText = document.getElementById('statusText');
+    const btn = document.getElementById('generateBtn');
+    const resultArea = document.getElementById('resultArea');
+
+    statusArea.classList.add('visible');
+    resultArea.classList.remove('visible');
+    btn.disabled = true;
+    statusText.textContent = 'Mistral génère votre site...';
+
+    const statuses = [
+      'Mistral génère votre site...',
+      'Conception du design en cours...',
+      'Rédaction du contenu...',
+      'Finalisation du code HTML...',
+    ];
+    let si = 0;
+    const statusInterval = setInterval(() => {
+      si = (si + 1) % statuses.length;
+      statusText.textContent = statuses[si];
+    }, 2500);
+
+    try {
+      const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: 'mistral-large-latest',
+          messages: [{ role: 'user', content: fullPrompt }],
+          max_tokens: 8000,
+          temperature: 0.7
+        })
+      });
+
+      clearInterval(statusInterval);
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.message || `Erreur API (${response.status})`);
+      }
+
+      const data = await response.json();
+      let html = data.choices[0].message.content.trim();
+
+      html = html.replace(/^```html\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/, '').trim();
+
+      generatedCode = html;
+
+      const frame = document.getElementById('previewFrame');
+      frame.style.display = 'block';
+      const doc = frame.contentDocument || frame.contentWindow.document;
+      doc.open();
+      doc.write(html);
+      doc.close();
+
+      document.getElementById('codeBlock').textContent = html;
+      document.getElementById('codeView').classList.remove('visible');
+      document.getElementById('previewToggle').classList.add('active');
+      document.getElementById('codeToggle').classList.remove('active');
+
+      statusArea.classList.remove('visible');
+      resultArea.classList.add('visible');
+
+    } catch (e) {
+      clearInterval(statusInterval);
+      statusArea.classList.remove('visible');
+      err.textContent = 'Erreur : ' + e.message;
+      err.classList.add('visible');
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  function copyCode() {
+    if (!generatedCode) return;
+    navigator.clipboard.writeText(generatedCode).then(() => {
+      const btn = event.target;
+      btn.textContent = 'Copié !';
+      setTimeout(() => btn.textContent = 'Copier le code', 1500);
+    });
+  }
+
+  function downloadHTML() {
+    if (!generatedCode) return;
+    const blob = new Blob([generatedCode], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'mon-site.html';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+</script>
