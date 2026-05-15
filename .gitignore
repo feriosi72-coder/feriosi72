@@ -1,0 +1,1 @@
+Nothing needs to be added to .gitignore since only a JavaScript source file (bm-core.js) was added, which is a source code file that should be tracked in version control.
